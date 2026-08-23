@@ -1,108 +1,63 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Character & DLC Store - ร้านค้าสุดพิเศษ</title>
-    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;600&display=swap" rel="stylesheet">
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Prompt', sans-serif; }
-        body { background-color: #0f111a; color: #fff; display: flex; flex-direction: column; min-height: 100vh; }
-        header { background: #1a1d2d; padding: 20px; text-align: center; border-bottom: 2px solid #ff4757; }
-        header h1 { color: #ff4757; font-size: 24px; }
-        .container { display: flex; flex: 1; padding: 20px; gap: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        
-        /* ส่วนร้านค้าฝั่งซ้าย */
-        .store-section { flex: 1; background: #16192b; padding: 20px; border-radius: 12px; }
-        .store-section h2 { margin-bottom: 15px; font-size: 20px; border-bottom: 1px solid #2f3542; padding-bottom: 10px; }
-        .product-card { background: #1e2238; padding: 15px; border-radius: 8px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .product-info h3 { font-size: 16px; margin-bottom: 5px; }
-        .product-info p { color: #a4b0be; font-size: 14px; }
-        .buy-btn { background: #ff4757; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        .buy-btn:hover { background: #ff6b81; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SILA FOLIO — Character Art Shop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #FFFFFF;
+    --surface: #F7F3FC;
+    --surface-hi: #EFE7FA;
+    --rose: #7C5CBF;
+    --mint: #3FA994;
+    --ink: #2A2438;
+    --muted: #7C7488;
+    --line: rgba(42,36,56,0.09);
+    --btn-ink: #FFFFFF;
+    --shadow: rgba(76,58,120,0.16);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background: var(--bg);
+    color: var(--ink);
+    font-family:'Manrope', sans-serif;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+  body.lock{ overflow:hidden; }
+  a{color:inherit;}
 
-        /* ส่วนแชท AI ฝั่งขวา */
-        .chat-section { width: 350px; background: #16192b; border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; border: 1px solid #2f3542; }
-        .chat-header { background: #1e2238; padding: 15px; font-weight: 600; text-align: center; border-bottom: 1px solid #2f3542; }
-        .chat-box { flex: 1; padding: 15px; overflow-y: auto; max-height: 400px; display: flex; flex-direction: column; gap: 10px; }
-        .message { padding: 10px 14px; border-radius: 8px; max-width: 80%; font-size: 14px; }
-        .message.ai { background: #2f3542; align-self: flex-start; }
-        .message.user { background: #ff4757; align-self: flex-end; }
-        .chat-input-area { display: flex; padding: 10px; background: #1e2238; border-top: 1px solid #2f3542; }
-        .chat-input-area input { flex: 1; background: #0f111a; border: 1px solid #2f3542; padding: 10px; color: white; border-radius: 6px; outline: none; }
-        .chat-input-area button { background: #ff4757; color: white; border: none; padding: 0 15px; margin-left: 8px; border-radius: 6px; cursor: pointer; }
+  .bg-wash{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 50% at 20% -10%, rgba(124,92,191,0.09), transparent 60%),
+      radial-gradient(ellipse 60% 40% at 90% 10%, rgba(63,169,148,0.06), transparent 60%);
+  }
 
-        @media(max-width: 768px) { .container { flex-direction: column; } .chat-section { width: 100%; } }
-    </style>
-</head>
-<body>
-
-    <header>
-        <h1>✨ AI Character & Secret DLC Store ✨</h1>
-        <p style="color: #a4b0be; font-size: 14px;">พูดคุยกับตัวละครและปลดล็อกภาพพิเศษได้ทันทีแบบอัตโนมัติ!</p>
-    </header>
-
-    <div class="container">
-        <!-- รายการสินค้า / DLC -->
-        <div class="store-section">
-            <h2>🛒 แพ็กเกจ DLC พิเศษ</h2>
-            
-            <div class="product-card">
-                <div class="product-info">
-                    <h3>🔥 DLC Set Vol.1 (ภาพ Service 10 รูป)</h3>
-                    <p>ราคา: 99 บาท (ส่งตรงเข้าอีเมลทันทีหลังชำระเงิน)</p>
-                </div>
-                <button class="buy-btn" onclick="alert('ระบบจำลอง: กดซื้อแล้วจะเด้งไปหน้าชำระเงิน QR Code อัตโนมัติ!')">ซื้อเลย</button>
-            </div>
-
-            <div class="product-card">
-                <div class="product-info">
-                    <h3>💎 DLC Set Vol.2 (Uncensored + เซ็ตพิเศษ)</h3>
-                    <p>ราคา: 199 บาท (ส่งตรงเข้าอีเมลทันทีหลังชำระเงิน)</p>
-                </div>
-                <button class="buy-btn" onclick="alert('ระบบจำลอง: กดซื้อแล้วจะเด้งไปหน้าชำระเงิน QR Code อัตโนมัติ!')">ซื้อเลย</button>
-            </div>
-        </div>
-
-        <!-- หน้าต่างแชท AI -->
-        <div class="chat-section">
-            <div class="chat-header">💬 แชทกับน้องคาแรคเตอร์</div>
-            <div class="chat-box" id="chatBox">
-                <div class="message ai">ง나... เข้ามาเยี่ยมกันหรอคะ สนใจรับ DLC พิเศษสักชุดไหมล่ะคะ? 👀✨</div>
-            </div>
-            <div class="chat-input-area">
-                <input type="text" id="userInput" placeholder="พิมพ์ข้อความคุยกับน้อง..." onkeypress="handleKey(event)">
-                <button onclick="sendMessage()">ส่ง</button>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        function sendMessage() {
-            const input = document.getElementById('userInput');
-            const chatBox = document.getElementById('chatBox');
-            if(input.value.trim() === '') return;
-
-            // ข้อความผู้ใช้
-            chatBox.innerHTML += `<div class="message user">${input.value}</div>`;
-            const userText = input.value;
-            input.value = '';
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            // จำลองการตอบกลับของ AI (ตรงนี้สามารถเชื่อม API บอทจริงทีหลังได้)
-            setTimeout(() => {
-                let reply = "ง나... ดีใจจังที่คุยด้วย! อย่าลืมกดซื้อ DLC ด้านซ้ายเป็นกำลังใจให้ด้วยน้า ❤️";
-                if(userText.includes("ราคา") || userText.includes("ซื้อ")) {
-                    reply = "ราคาคุ้มมากๆ เลยนะคะ กดปุ่มสีแดงด้านซ้ายมือได้เลย ระบบส่งรูปให้อัตโนมัติเลยค่ะ!";
-                }
-                chatBox.innerHTML += `<div class="message ai">${reply}</div>`;
-                chatBox.scrollTop = chatBox.scrollHeight;
-            }, 1000);
-        }
-
-        function handleKey(e) {
-            if(e.key === 'Enter') sendMessage();
-        }
-    </script>
-</body>
-</html>
+  header{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 22px 6%;
+    backdrop-filter: blur(14px);
+    background: var(--rose);
+    border-bottom: 1px solid rgba(255,255,255,0.14);
+  }
+  .logo{
+    font-family:'Fraunces', serif;
+    font-size: 21px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: #FFFFFF;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo-mark{
+    height: 34px; width: 34px; border-radius: 10px;
+    background: linear-gradient(150deg, #EAE0FA, #C9B6EE);
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-style:italic; color:#7C5CBF; font-weight:600; font-size:16px;
+  }
+  .logo span{ co
