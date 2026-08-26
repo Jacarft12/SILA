@@ -8,7 +8,7 @@
 const DOWNLOAD_LINKS = {
   moonlit: 'https://drive.google.com/PUT_MOONLIT_LINK_HERE',
   daydream: 'https://drive.google.com/PUT_DAYDREAM_LINK_HERE',
-  festival: 'https://drive.google.com/PUT_FESTIVAL_LINK_HERE',
+  Arina: 'https://drive.google.com/drive/folders/1lRbY7BWgSl2yJZO9g2qgitHfL9yHmaYR?usp=sharing',
   yuna: 'https://drive.google.com/PUT_YUNA_LINK_HERE',
   'yuna-live2d': 'https://drive.google.com/PUT_YUNA_LIVE2D_LINK_HERE',
 };
