@@ -277,6 +277,62 @@
   }
   .modal-buy:hover{ transform: translateY(-2px); }
 
+  /* PAGE DETAIL — shared-element expand view (fullscreen) */
+  .page-detail{
+    position:fixed; inset:0; z-index:150;
+    background: var(--bg);
+    display:none;
+    overflow-y:auto;
+  }
+  .page-detail.open{ display:block; }
+  .page-detail-back{
+    position:fixed; top:22px; left:22px; z-index:160;
+    width:42px; height:42px; border-radius:50%;
+    background: rgba(255,255,255,0.92); border:none; cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; color:var(--ink);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    opacity:0; transform: translateY(-8px);
+    transition: opacity 0.35s ease 0.15s, transform 0.35s ease 0.15s;
+  }
+  .page-detail.content-in .page-detail-back{ opacity:1; transform:translateY(0); }
+  .page-detail-media{
+    position:fixed; z-index:150;
+    background: linear-gradient(135deg, var(--surface-hi), #E4D9F7);
+    overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    transition: top 0.6s cubic-bezier(.2,.8,.2,1), left 0.6s cubic-bezier(.2,.8,.2,1),
+                width 0.6s cubic-bezier(.2,.8,.2,1), height 0.6s cubic-bezier(.2,.8,.2,1),
+                border-radius 0.6s cubic-bezier(.2,.8,.2,1);
+  }
+  .page-detail-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .page-detail-media svg{ width:30%; height:30%; opacity:0.85; }
+  .page-detail-media.expanded{
+    top:0; left:0; width:100vw; height:min(62vh, 560px);
+    border-radius:0;
+  }
+  .page-detail-info{
+    position:relative; z-index:151;
+    max-width: 640px; margin: 0 auto;
+    padding: 40px 6% 100px;
+    opacity:0; transform: translateY(18px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .page-detail.content-in .page-detail-info{ opacity:1; transform:translateY(0); }
+  .page-detail-info .tag{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mint); letter-spacing:0.05em; }
+  .page-detail-info h2{ font-family:'Fraunces', serif; font-size: clamp(28px,4vw,40px); font-weight:600; margin-top:10px; }
+  .page-detail-info .desc{ color:var(--muted); font-size:15.5px; line-height:1.8; margin-top:18px; white-space:pre-line; }
+  .page-detail-foot{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-top:32px; padding-top:26px; border-top:1px solid var(--line);
+  }
+  .page-detail-price{ font-family:'JetBrains Mono', monospace; color:var(--rose); font-size:24px; font-weight:700; }
+  .page-detail-spacer{ height: min(62vh, 560px); }
+  @media (max-width: 780px){
+    .page-detail-media.expanded{ height:52vh; }
+    .page-detail-spacer{ height:52vh; }
+  }
+
   /* PAYMENT MODAL */
   .pay-body{ padding: 32px; text-align:center; }
   .pay-body h3{ font-family:'Fraunces', serif; font-size:24px; font-weight:600; }
@@ -490,19 +546,18 @@
   <div>สร้างด้วย Claude</div>
 </footer>
 
-<!-- DETAIL MODAL -->
-<div class="overlay" id="detailOverlay">
-  <div class="modal-panel">
-    <button class="modal-close" id="detailClose">✕</button>
-    <div class="modal-hero" id="detailHero"></div>
-    <div class="modal-body">
-      <div class="tag" id="detailTag"></div>
-      <h3 id="detailTitle"></h3>
-      <p class="desc" id="detailDesc"></p>
-      <div class="modal-foot">
-        <div class="modal-price" id="detailPrice"></div>
-        <button class="modal-buy" id="detailBuyBtn">ซื้อเลย</button>
-      </div>
+<!-- PAGE DETAIL (fullscreen shared-element view) -->
+<div class="page-detail" id="pageDetail" aria-hidden="true">
+  <button class="page-detail-back" id="pageDetailBack">✕</button>
+  <div class="page-detail-media" id="pageDetailMedia"></div>
+  <div class="page-detail-spacer"></div>
+  <div class="page-detail-info">
+    <div class="tag" id="pdTag"></div>
+    <h2 id="pdTitle"></h2>
+    <p class="desc" id="pdDesc"></p>
+    <div class="page-detail-foot">
+      <div class="page-detail-price" id="pdPrice"></div>
+      <button class="modal-buy" id="pdBuyBtn">ซื้อเลย</button>
     </div>
   </div>
 </div>
@@ -544,15 +599,29 @@
   }, {threshold: 0.15});
   document.querySelectorAll('.pkg, .flow-step').forEach(el=> io.observe(el));
 
-  /* ---------- DETAIL MODAL ---------- */
-  const detailOverlay = document.getElementById('detailOverlay');
-  const detailHero = document.getElementById('detailHero');
-  const detailTag = document.getElementById('detailTag');
-  const detailTitle = document.getElementById('detailTitle');
-  const detailDesc = document.getElementById('detailDesc');
-  const detailPrice = document.getElementById('detailPrice');
-  const detailBuyBtn = document.getElementById('detailBuyBtn');
+  /* ---------- PAGE DETAIL (fullscreen shared-element expand) ---------- */
+  // ระบบนี้ทำงานอัตโนมัติกับการ์ด .pkg ทุกใบ ไม่ต้องแก้ JS เพิ่มเวลาเพิ่มอัลบั้มใหม่
+  const pageDetail = document.getElementById('pageDetail');
+  const pageDetailMedia = document.getElementById('pageDetailMedia');
+  const pageDetailBack = document.getElementById('pageDetailBack');
+  const pdTag = document.getElementById('pdTag');
+  const pdTitle = document.getElementById('pdTitle');
+  const pdDesc = document.getElementById('pdDesc');
+  const pdPrice = document.getElementById('pdPrice');
+  const pdBuyBtn = document.getElementById('pdBuyBtn');
   let currentProductId = null;
+  let originRect = null;   // ตำแหน่ง/ขนาดของรูปปกตอนยังเป็นการ์ดเล็ก ใช้ตอนเล่นย้อนกลับ
+  let originRadius = '14px';
+
+  function getCoverMarkup(pkgEl){
+    // ใช้รูปเต็มตัวถ้ามีการใส่ data-cover ไว้ ไม่งั้น fallback ไปใช้รูป/ไอคอนของ thumbnail เดิม
+    const coverSrc = pkgEl.dataset.cover;
+    if (coverSrc) return `<img src="${coverSrc}" alt="">`;
+    const thumb = pkgEl.querySelector('.pkg-thumb');
+    const img = thumb.querySelector('img');
+    if (img) return `<img src="${img.getAttribute('src')}" alt="">`;
+    return thumb.querySelector('svg').outerHTML;
+  }
 
   function openDetail(pkgEl){
     const id = pkgEl.dataset.id;
@@ -560,37 +629,74 @@
     const title = pkgEl.querySelector('h3').textContent;
     const price = pkgEl.querySelector('.pkg-price').textContent;
     const desc = pkgEl.dataset.desc || pkgEl.querySelector('p').textContent;
-    const heroSvg = pkgEl.querySelector('.pkg-thumb').innerHTML;
 
     currentProductId = id;
-    detailHero.innerHTML = heroSvg;
-    detailTag.textContent = tag;
-    detailTitle.textContent = title;
-    detailDesc.textContent = desc;
-    detailPrice.textContent = price;
-    detailOverlay.classList.add('open');
+    pdTag.textContent = tag;
+    pdTitle.textContent = title;
+    pdDesc.textContent = desc;
+    pdPrice.textContent = price;
+    pageDetailMedia.innerHTML = getCoverMarkup(pkgEl);
+
+    // ---- FLIP step 1: จำตำแหน่ง/ขนาดรูปการ์ดเดิมไว้ (จุดเริ่มของแอนิเมชัน) ----
+    const thumb = pkgEl.querySelector('.pkg-thumb');
+    const r = thumb.getBoundingClientRect();
+    originRect = r;
+    originRadius = getComputedStyle(thumb).borderRadius || '14px';
+
+    pageDetailMedia.style.transition = 'none';
+    pageDetailMedia.style.top = r.top + 'px';
+    pageDetailMedia.style.left = r.left + 'px';
+    pageDetailMedia.style.width = r.width + 'px';
+    pageDetailMedia.style.height = r.height + 'px';
+    pageDetailMedia.style.borderRadius = originRadius;
+    pageDetailMedia.classList.remove('expanded');
+
+    pageDetail.classList.add('open');
+    pageDetail.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
+    window.scrollTo(0, 0);
+
+    // ---- FLIP step 2: บังคับ reflow แล้วค่อยขยายไปเต็มจอ (Play) ----
+    requestAnimationFrame(()=>{
+      pageDetailMedia.offsetHeight; // force reflow
+      pageDetailMedia.style.transition = '';
+      pageDetailMedia.classList.add('expanded');
+      pageDetail.classList.add('content-in');
+    });
   }
 
   function closeDetail(){
-    detailOverlay.classList.remove('open');
-    document.body.style.overflow = '';
+    pageDetail.classList.remove('content-in');
+
+    // เล่นย้อนกลับ: หดรูปกลับไปที่ตำแหน่งการ์ดเดิม
+    if (originRect){
+      pageDetailMedia.classList.remove('expanded');
+      pageDetailMedia.style.top = originRect.top + 'px';
+      pageDetailMedia.style.left = originRect.left + 'px';
+      pageDetailMedia.style.width = originRect.width + 'px';
+      pageDetailMedia.style.height = originRect.height + 'px';
+      pageDetailMedia.style.borderRadius = originRadius;
+    }
+
+    setTimeout(()=>{
+      pageDetail.classList.remove('open');
+      pageDetail.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+    }, 600);
   }
 
   document.querySelectorAll('.pkg').forEach(pkg=>{
     pkg.style.cursor = 'pointer';
     pkg.addEventListener('click', (e)=>{
-      if(e.target.closest('.pkg-buy')) return; // buy button handled separately
+      if(e.target.closest('.pkg-buy')) return; // ปุ่มซื้อเลยบนการ์ด ให้ไปเช็คเอาต์ตรงๆ ไม่ต้องเปิดหน้ารายละเอียด
       openDetail(pkg);
     });
   });
 
-  document.getElementById('detailClose').addEventListener('click', closeDetail);
-  detailOverlay.addEventListener('click', (e)=>{ if(e.target === detailOverlay) closeDetail(); });
+  pageDetailBack.addEventListener('click', closeDetail);
 
-  detailBuyBtn.addEventListener('click', ()=>{
-    closeDetail();
-    startPayment(currentProductId);
+  pdBuyBtn.addEventListener('click', ()=>{
+    startPayment(currentProductId); // เปิด modal ชำระเงินซ้อนบนหน้ารายละเอียดได้เลย ไม่ต้องปิดหน้านี้ก่อน
   });
 
   /* ---------- BUY BUTTONS (on cards) ---------- */
@@ -694,7 +800,7 @@
 
   document.addEventListener('keydown', (e)=>{
     if(e.key === 'Escape'){
-      closeDetail();
+      if(pageDetail.classList.contains('open')) closeDetail();
       payOverlay.classList.remove('open');
       document.body.style.overflow = '';
       if(pollTimer) clearInterval(pollTimer);
