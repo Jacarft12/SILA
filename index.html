@@ -165,6 +165,19 @@
   }
   .section-head p{ color:var(--muted); margin-top:14px; font-size:15.5px; line-height:1.6; }
 
+  .category-block{ max-width:1100px; margin:0 auto; }
+  .category-block + .category-block{ margin-top: 70px; }
+  .category-head{
+    display:flex; align-items:baseline; gap:12px;
+    margin-bottom: 26px; padding-bottom:16px; border-bottom:1px solid var(--line);
+  }
+  .category-head h3{
+    font-family:'Fraunces', serif; font-weight:600; font-size:22px;
+  }
+  .category-head .count{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--muted);
+  }
+
   .grid{
     max-width: 1100px; margin: 0 auto;
     display:grid; grid-template-columns: repeat(4, 1fr); gap: 26px;
@@ -195,7 +208,7 @@
   .grid.hovering .pkg.is-focused.in-view{ transform: scale(1.08); opacity:1; }
 
   .pkg-thumb{
-    height: 190px; border-radius: 14px; margin-bottom: 20px;
+    aspect-ratio: 4/5; border-radius: 14px; margin-bottom: 20px;
     background: linear-gradient(135deg, var(--surface-hi), #E4D9F7);
     position:relative; overflow:hidden;
     display:flex; align-items:center; justify-content:center;
@@ -533,79 +546,110 @@
   <div class="section-head">
     <div class="eyebrow">คอลเลกชัน</div>
     <h2>เลือกแพ็กที่ใช่สำหรับคุณ</h2>
-    <p>ทุกแพ็กเป็นไฟล์ความละเอียดสูง ส่งอัตโนมัติทันทีหลังชำระเงินสำเร็จ</p>
+    <p>ทุกแพ็กส่งอัตโนมัติทันทีหลังชำระเงินสำเร็จ</p>
   </div>
-  <div class="grid" id="pkg-grid">
 
-    <div class="pkg" data-id="moonlit" data-desc="ธีมกลางคืน โทนฟ้าม่วงนวล ให้ความรู้สึกสงบและลึกลับ ภาพความละเอียดสูงทั้งหมด 6 ภาพ เหมาะสำหรับคนที่ชอบบรรยากาศเงียบสงบยามค่ำคืน">
-      <div class="pkg-thumb">
-        <span class="stack-badge">6 ภาพ</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>
-      </div>
-      <div class="tag">SET 01 · 6 ภาพ</div>
-      <h3>Moonlit</h3>
-      <p>ธีมกลางคืน โทนฟ้าม่วงนวล ให้ความรู้สึกสงบและลึกลับ</p>
-      <div class="pkg-foot">
-        <div class="pkg-price">฿250</div>
-        <button class="pkg-buy" data-buy="moonlit">ซื้อเลย</button>
-      </div>
+  <div class="category-block">
+    <div class="category-head">
+      <h3>🖼️ DLC ภาพ</h3>
+      <span class="count">5 อัลบั้ม</span>
     </div>
+    <div class="grid" id="pkg-grid-pic">
 
-    <div class="pkg" data-id="daydream" data-desc="โทนพาสเทลอบอุ่น บรรยากาศสบายๆ ยามบ่าย ภาพความละเอียดสูงทั้งหมด 8 ภาพ ให้ความรู้สึกผ่อนคลายเหมือนวันหยุดสบายๆ">
-      <div class="pkg-thumb">
-        <span class="stack-badge">8 ภาพ</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="#3FA994" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/></svg>
+      <div class="pkg" data-id="moonlit" data-desc="ธีมกลางคืน โทนฟ้าม่วงนวล ให้ความรู้สึกสงบและลึกลับ ภาพความละเอียดสูงทั้งหมด 6 ภาพ เหมาะสำหรับคนที่ชอบบรรยากาศเงียบสงบยามค่ำคืน">
+        <div class="pkg-thumb">
+          <span class="stack-badge">6 ภาพ</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>
+        </div>
+        <div class="tag">SET 01 · 6 ภาพ</div>
+        <h3>Moonlit</h3>
+        <p>ธีมกลางคืน โทนฟ้าม่วงนวล ให้ความรู้สึกสงบและลึกลับ</p>
+        <div class="pkg-foot">
+          <div class="pkg-price">฿250</div>
+          <button class="pkg-buy" data-buy="moonlit">ซื้อเลย</button>
+        </div>
       </div>
-      <div class="tag">SET 02 · 8 ภาพ</div>
-      <h3>Daydream</h3>
-      <p>โทนพาสเทลอบอุ่น บรรยากาศสบายๆ ยามบ่าย</p>
-      <div class="pkg-foot">
-        <div class="pkg-price">฿350</div>
-        <button class="pkg-buy" data-buy="daydream">ซื้อเลย</button>
+
+      <div class="pkg" data-id="daydream" data-desc="โทนพาสเทลอบอุ่น บรรยากาศสบายๆ ยามบ่าย ภาพความละเอียดสูงทั้งหมด 8 ภาพ ให้ความรู้สึกผ่อนคลายเหมือนวันหยุดสบายๆ">
+        <div class="pkg-thumb">
+          <span class="stack-badge">8 ภาพ</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3FA994" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/></svg>
+        </div>
+        <div class="tag">SET 02 · 8 ภาพ</div>
+        <h3>Daydream</h3>
+        <p>โทนพาสเทลอบอุ่น บรรยากาศสบายๆ ยามบ่าย</p>
+        <div class="pkg-foot">
+          <div class="pkg-price">฿350</div>
+          <button class="pkg-buy" data-buy="daydream">ซื้อเลย</button>
+        </div>
       </div>
+
+      <div class="pkg" data-id="festival" data-desc="ชุดธีมเทศกาล สีสันสดใส ลายผ้าและโคมไฟ ภาพความละเอียดสูงทั้งหมด 5 ภาพ สนุกสดใสเหมาะกับคนชอบสีสัน">
+        <div class="pkg-thumb">
+          <span class="stack-badge">5 ภาพ</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>
+        </div>
+        <div class="tag">SET 03 · 5 ภาพ</div>
+        <h3>Festival</h3>
+        <p>ชุดธีมเทศกาล สีสันสดใส ลายผ้าและโคมไฟ</p>
+        <div class="pkg-foot">
+          <div class="pkg-price">฿280</div>
+          <button class="pkg-buy" data-buy="festival">ซื้อเลย</button>
+        </div>
+      </div>
+
+      <div class="pkg" data-id="yuna" data-desc="กล่องเก็บภาพรวมของยูนะ ตั้งแต่ท่าทางสบายๆ ไปจนถึงมุมกล้องหลากสไตล์ วาดขึ้นใหม่ทุกภาพในคอลเลกชันนี้ ไฟล์ความละเอียดสูง พร้อมใช้เป็นวอลเปเปอร์หรือของสะสม">
+        <div class="pkg-thumb">
+          <span class="stack-badge">10 ภาพ</span>
+          <img src="images/yunacover.png" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="tag">ALBUM · 10 ภาพ</div>
+        <h3>ยูนะ</h3>
+        <p>อัลบั้มรวมภาพตัวละครยูนะ หลากอารมณ์ หลากมุม เก็บครบในเซ็ตเดียว</p>
+        <div class="pkg-foot">
+          <div class="pkg-price">฿390</div>
+          <button class="pkg-buy" data-buy="yuna">ดูอัลบั้ม</button>
+        </div>
+      </div>
+
+      <div class="pkg" data-id="MaeKaew" data-desc="ใส่คำอธิบายยาวๆ ที่จะโชว์ตอนกดเข้าไปดูรายละเอียด">
+        <div class="pkg-thumb">
+          <img src="images/ใส่ชื่อไฟล์รูป.jpg" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+        <div class="tag">ใส่ป้ายกำกับ เช่น SET 04 · 7 ภาพ</div>
+        <h3>แม่แก้ว</h3>
+        <p>แม่แก้วสวยยๆ</p>
+        <div class="pkg-foot">
+          <div class="pkg-price">฿25</div>
+          <button class="pkg-buy" data-buy="MaeKaew">ซื้อเลย</button>
+        </div>
+      </div>
+
     </div>
-
-    <div class="pkg" data-id="festival" data-desc="ชุดธีมเทศกาล สีสันสดใส ลายผ้าและโคมไฟ ภาพความละเอียดสูงทั้งหมด 5 ภาพ สนุกสดใสเหมาะกับคนชอบสีสัน">
-      <div class="pkg-thumb">
-        <span class="stack-badge">5 ภาพ</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>
-      </div>
-      <div class="tag">SET 03 · 5 ภาพ</div>
-      <h3>Festival</h3>
-      <p>ชุดธีมเทศกาล สีสันสดใส ลายผ้าและโคมไฟ</p>
-      <div class="pkg-foot">
-        <div class="pkg-price">฿280</div>
-        <button class="pkg-buy" data-buy="festival">ซื้อเลย</button>
-      </div>
-    </div>
-
-    <div class="pkg" data-id="yuna" data-desc="กล่องเก็บภาพรวมของยูนะ ตั้งแต่ท่าทางสบายๆ ไปจนถึงมุมกล้องหลากสไตล์ วาดขึ้นใหม่ทุกภาพในคอลเลกชันนี้ ไฟล์ความละเอียดสูง พร้อมใช้เป็นวอลเปเปอร์หรือของสะสม">
-      <div class="pkg-thumb">
-        <span class="stack-badge">10 ภาพ</span>
-        <img src="images/yunacover.png" style="width:100%; height:100%; object-fit:cover;">
-      </div>
-      <div class="tag">ALBUM · 10 ภาพ</div>
-      <h3>ยูนะ</h3>
-      <p>อัลบั้มรวมภาพตัวละครยูนะ หลากอารมณ์ หลากมุม เก็บครบในเซ็ตเดียว</p>
-      <div class="pkg-foot">
-        <div class="pkg-price">฿390</div>
-        <button class="pkg-buy" data-buy="yuna">ดูอัลบั้ม</button>
-      </div>
-    </div>
-
-    <div class="pkg" data-id="MaeKaew" data-desc="ใส่คำอธิบายยาวๆ ที่จะโชว์ตอนกดเข้าไปดูรายละเอียด">
-  <div class="pkg-thumb">
-    <img src="images/ใส่ชื่อไฟล์รูป.jpg" style="width:100%; height:100%; object-fit:cover;">
   </div>
-  <div class="tag">ใส่ป้ายกำกับ เช่น SET 04 · 7 ภาพ</div>
-  <h3>แม่แก้ว</h3>
-  <p>แม่แก้วสวยยๆ</p>
-  <div class="pkg-foot">
-    <div class="pkg-price">฿25</div>
-    <button class="pkg-buy" data-buy="MaeKaew">ซื้อเลย</button>
-  </div>
-</div>
-    
+
+  <div class="category-block">
+    <div class="category-head">
+      <h3>🎬 DLC Live2D</h3>
+      <span class="count">1 โมเดล</span>
+    </div>
+    <div class="grid" id="pkg-grid-live2d">
+
+      <div class="pkg" data-id="yuna-live2d" data-format="ไฟล์ Live2D (.zip + .moc3)" data-desc="โมเดล Live2D ของยูนะ ขยับตา กระพริบ พูด และโยกตัวได้ พร้อมไฟล์ริก (rig) ใช้กับโปรแกรมที่รองรับ Live2D Cubism ได้ทันที เหมาะสำหรับใช้เป็น VTuber หรือของสะสม">
+        <div class="pkg-thumb">
+          <span class="stack-badge">1 โมเดล</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        </div>
+        <div class="tag">LIVE2D · 1 โมเดล</div>
+        <h3>ยูนะ Live2D</h3>
+        <p>โมเดลขยับได้ พร้อมไฟล์ริกสำหรับใช้งานจริง</p>
+        <div class="pkg-foot">
+          <div class="pkg-price">฿890</div>
+          <button class="pkg-buy" data-buy="yuna-live2d">ซื้อเลย</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </section>
 
@@ -668,7 +712,7 @@
       </div>
       <div class="detail-meta">
         <div class="meta-box"><div class="k">จำนวนภาพ</div><div class="v" id="dCount"></div></div>
-        <div class="meta-box"><div class="k">รูปแบบไฟล์</div><div class="v">PNG ความละเอียดสูง</div></div>
+        <div class="meta-box"><div class="k">รูปแบบไฟล์</div><div class="v" id="dFormat">PNG ความละเอียดสูง</div></div>
       </div>
       <div class="detail-desc" id="dDesc"></div>
       <div class="detail-actions">
@@ -733,6 +777,7 @@
   const dPrice = document.getElementById('dPrice');
   const dPriceNote = document.getElementById('dPriceNote');
   const dCount = document.getElementById('dCount');
+  const dFormat = document.getElementById('dFormat');
   const dDesc = document.getElementById('dDesc');
   const dBuyBtn = document.getElementById('dBuyBtn');
   let currentProductId = null;
@@ -766,6 +811,7 @@
     dPrice.textContent = price;
     dPriceNote.textContent = 'ราคารวม / อัลบั้ม ' + count;
     dCount.textContent = count;
+    dFormat.textContent = pkgEl.dataset.format || 'PNG ความละเอียดสูง';
     dDesc.textContent = longDesc;
     dHero.innerHTML = cover;
     dBuyBtn.textContent = 'ซื้อทันที · ' + price;
@@ -811,29 +857,30 @@
     startPayment(currentProductId); // เปิด modal ชำระเงินซ้อนบนหน้ารายละเอียดได้เลย ไม่ต้องปิดหน้านี้ก่อน
   });
 
-  /* ---------- HOVER-FOCUS FAN EFFECT ON THE GRID ---------- */
-  const pkgGrid = document.getElementById('pkg-grid');
-  const pkgCards = Array.from(pkgGrid.querySelectorAll('.pkg'));
+  /* ---------- HOVER-FOCUS FAN EFFECT — works on every .grid independently ---------- */
+  document.querySelectorAll('.grid').forEach(pkgGrid=>{
+    const pkgCards = Array.from(pkgGrid.querySelectorAll('.pkg'));
 
-  pkgCards.forEach(card=>{
-    card.addEventListener('mouseenter', ()=>{
-      pkgGrid.classList.add('hovering');
-      pkgCards.forEach(c=> c.classList.toggle('is-focused', c === card));
+    pkgCards.forEach(card=>{
+      card.addEventListener('mouseenter', ()=>{
+        pkgGrid.classList.add('hovering');
+        pkgCards.forEach(c=> c.classList.toggle('is-focused', c === card));
+      });
+      card.addEventListener('focus', ()=>{
+        pkgGrid.classList.add('hovering');
+        pkgCards.forEach(c=> c.classList.toggle('is-focused', c === card));
+      });
     });
-    card.addEventListener('focus', ()=>{
-      pkgGrid.classList.add('hovering');
-      pkgCards.forEach(c=> c.classList.toggle('is-focused', c === card));
-    });
-  });
-  pkgGrid.addEventListener('mouseleave', ()=>{
-    pkgGrid.classList.remove('hovering');
-    pkgCards.forEach(c=> c.classList.remove('is-focused'));
-  });
-  pkgGrid.addEventListener('focusout', (e)=>{
-    if(!pkgGrid.contains(e.relatedTarget)){
+    pkgGrid.addEventListener('mouseleave', ()=>{
       pkgGrid.classList.remove('hovering');
       pkgCards.forEach(c=> c.classList.remove('is-focused'));
-    }
+    });
+    pkgGrid.addEventListener('focusout', (e)=>{
+      if(!pkgGrid.contains(e.relatedTarget)){
+        pkgGrid.classList.remove('hovering');
+        pkgCards.forEach(c=> c.classList.remove('is-focused'));
+      }
+    });
   });
 
   /* ---------- BUY BUTTONS (on cards) ---------- */
