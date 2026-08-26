@@ -10,6 +10,7 @@ const PRODUCTS = {
   daydream: { name: 'Daydream',     amount: 35000 }, // 350 บาท
   festival: { name: 'Festival',     amount: 28000 }, // 280 บาท
   yuna:     { name: 'ยูนะ Album',    amount: 39000 }, // 390 บาท
+  MaeKaew:  { name: 'แม่แก้ว',        amount: 2500 },  // 25 บาท
 };
 
 export default async function handler(req, res) {
