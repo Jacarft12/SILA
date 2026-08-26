@@ -24,9 +24,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'ไม่พบสินค้านี้' });
   }
 
-  const secretKey = process.env.OMISE_SECRET_KEY;
+  const secretKey = process.env.OMISE_KEY;
   if (!secretKey) {
-    return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า OMISE_SECRET_KEY บนเซิร์ฟเวอร์' });
+    return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า OMISE_KEY บนเซิร์ฟเวอร์' });
   }
 
   const auth = Buffer.from(secretKey + ':').toString('base64');
