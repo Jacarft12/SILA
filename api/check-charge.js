@@ -9,7 +9,7 @@ const DOWNLOAD_LINKS = {
   moonlit: 'https://drive.google.com/PUT_MOONLIT_LINK_HERE',
   daydream: 'https://drive.google.com/PUT_DAYDREAM_LINK_HERE',
   festival: 'https://drive.google.com/PUT_FESTIVAL_LINK_HERE',
-  yuna: 'https://drive.google.com/PUT_YUNA_LINK_HERE',
+  yuna: 'https://drive.google.com/drive/folders/1Vd0QCBCSx54RMV__ZClksl_sB8t1pC6O?usp=sharing',
 };
 
 export default async function handler(req, res) {
