@@ -9,7 +9,7 @@ const DOWNLOAD_LINKS = {
   moonlit: 'https://drive.google.com/PUT_MOONLIT_LINK_HERE',
   daydream: 'https://drive.google.com/PUT_DAYDREAM_LINK_HERE',
   festival: 'https://drive.google.com/PUT_FESTIVAL_LINK_HERE',
-  yuna: 'https://drive.google.com/drive/folders/1Vd0QCBCSx54RMV__ZClksl_sB8t1pC6O?usp=sharing',
+  yuna: 'https://drive.google.com/PUT_YUNA_LINK_HERE',
 };
 
 export default async function handler(req, res) {
@@ -19,9 +19,9 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: 'ไม่พบรหัสรายการชำระเงิน' });
   }
 
-  const secretKey = process.env.OMISE_SECRET_KEY;
+  const secretKey = process.env.OMISE_KEY;
   if (!secretKey) {
-    return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า OMISE_SECRET_KEY บนเซิร์ฟเวอร์' });
+    return res.status(500).json({ error: 'ยังไม่ได้ตั้งค่า OMISE_KEY บนเซิร์ฟเวอร์' });
   }
 
   const auth = Buffer.from(secretKey + ':').toString('base64');
