@@ -167,18 +167,33 @@
 
   .grid{
     max-width: 1100px; margin: 0 auto;
-    display:grid; grid-template-columns: repeat(3, 1fr); gap: 26px;
+    display:grid; grid-template-columns: repeat(4, 1fr); gap: 26px;
   }
   .pkg{
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 20px;
     padding: 28px;
-    opacity:0; transform: translateY(24px);
-    transition: transform 0.6s ease, opacity 0.6s ease, border-color 0.3s;
+    opacity:0; transform: translateY(24px) scale(1);
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1), opacity 0.6s ease, border-color 0.3s, box-shadow 0.4s ease;
+    transform-origin: center;
+    cursor:pointer;
   }
-  .pkg.in-view{ opacity:1; transform:translateY(0); }
+  .pkg.in-view{ opacity:1; transform:translateY(0) scale(1); }
   .pkg:hover{ border-color: rgba(124,92,191,0.35); }
+
+  /* hover-focus fan effect across the grid */
+  .grid.hovering .pkg{ transform: scale(0.92); opacity:0.62; }
+  .grid.hovering .pkg.in-view{ transform: scale(0.92); opacity:0.62; }
+  .grid.hovering .pkg.is-focused{
+    transform: scale(1.08);
+    opacity: 1;
+    z-index: 3;
+    border-color: rgba(124,92,191,0.45);
+    box-shadow: 0 26px 50px var(--shadow);
+  }
+  .grid.hovering .pkg.is-focused.in-view{ transform: scale(1.08); opacity:1; }
+
   .pkg-thumb{
     height: 190px; border-radius: 14px; margin-bottom: 20px;
     background: linear-gradient(135deg, var(--surface-hi), #E4D9F7);
@@ -202,6 +217,15 @@
     text-decoration:none; display:inline-block;
   }
   .pkg-buy:hover{ transform: translateY(-2px); }
+  .pkg-thumb .stack-badge{
+    position:absolute; top:12px; right:12px;
+    background: rgba(255,255,255,0.85);
+    color: var(--rose);
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; font-weight:600;
+    padding: 4px 10px; border-radius: 999px;
+    border: 1px solid rgba(124,92,191,0.25);
+  }
 
   /* HOW IT WORKS */
   .flow{
@@ -277,60 +301,130 @@
   }
   .modal-buy:hover{ transform: translateY(-2px); }
 
-  /* PAGE DETAIL — shared-element expand view (fullscreen) */
-  .page-detail{
-    position:fixed; inset:0; z-index:150;
+  /* ============ PRODUCT DETAIL OVERLAY (shared by every album) ============ */
+  .detail-overlay{
+    position:fixed; inset:0; z-index:200;
     background: var(--bg);
-    display:none;
     overflow-y:auto;
+    opacity:0; visibility:hidden;
+    transform: translateY(24px);
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0.45s;
   }
-  .page-detail.open{ display:block; }
-  .page-detail-back{
-    position:fixed; top:22px; left:22px; z-index:160;
-    width:42px; height:42px; border-radius:50%;
-    background: rgba(255,255,255,0.92); border:none; cursor:pointer;
+  .detail-overlay.open{
+    opacity:1; visibility:visible; transform: translateY(0);
+  }
+  .detail-bar{
+    position:sticky; top:0; z-index:5;
+    display:flex; align-items:center; gap:14px;
+    padding: 20px 6%;
+    background: rgba(255,255,255,0.88);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .detail-back{
+    display:flex; align-items:center; gap:8px;
+    background:none; border:1px solid var(--line); cursor:pointer;
+    padding: 9px 16px; border-radius:999px;
+    font-family:'Manrope', sans-serif; font-weight:600; font-size:13.5px; color:var(--ink);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .detail-back:hover{ border-color: var(--rose); background: var(--surface); }
+  .detail-crumb{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color: var(--muted);
+  }
+  .detail-crumb b{ color: var(--rose); font-weight:600; }
+
+  .detail-body{
+    max-width: 1100px; margin: 0 auto;
+    padding: 60px 6% 100px;
+    display:grid; grid-template-columns: 1.05fr 0.95fr; gap: 64px;
+  }
+
+  .detail-hero-img{
+    aspect-ratio: 4/5;
+    border-radius: 26px;
+    background: linear-gradient(150deg, #E4D9F7, var(--surface-hi) 55%, var(--surface));
+    position:relative; overflow:hidden;
     display:flex; align-items:center; justify-content:center;
-    font-size:18px; color:var(--ink);
-    box-shadow: 0 4px 14px rgba(0,0,0,0.18);
-    opacity:0; transform: translateY(-8px);
-    transition: opacity 0.35s ease 0.15s, transform 0.35s ease 0.15s;
+    box-shadow: 0 30px 60px var(--shadow);
   }
-  .page-detail.content-in .page-detail-back{ opacity:1; transform:translateY(0); }
-  .page-detail-media{
-    position:fixed; z-index:150;
-    background: linear-gradient(135deg, var(--surface-hi), #E4D9F7);
+  .detail-hero-img::before{
+    content:''; position:absolute; inset:0;
+    background: radial-gradient(circle at 25% 15%, rgba(255,255,255,0.5), transparent 45%),
+                radial-gradient(circle at 80% 90%, rgba(63,169,148,0.14), transparent 55%);
+  }
+  .detail-hero-img svg{ width:120px; height:120px; opacity:0.8; position:relative; z-index:1; }
+  .detail-hero-img img{ width:100%; height:100%; object-fit:cover; position:relative; z-index:1; }
+
+  .thumb-row{
+    display:grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 14px;
+  }
+  .thumb-row .th{
+    aspect-ratio: 1/1; border-radius: 10px;
+    background: linear-gradient(150deg, var(--surface-hi), var(--surface));
+    border: 1px solid var(--line);
+    cursor:pointer; transition: border-color 0.2s, transform 0.2s;
+    display:flex; align-items:center; justify-content:center;
     overflow:hidden;
-    display:flex; align-items:center; justify-content:center;
-    transition: top 0.6s cubic-bezier(.2,.8,.2,1), left 0.6s cubic-bezier(.2,.8,.2,1),
-                width 0.6s cubic-bezier(.2,.8,.2,1), height 0.6s cubic-bezier(.2,.8,.2,1),
-                border-radius 0.6s cubic-bezier(.2,.8,.2,1);
   }
-  .page-detail-media img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .page-detail-media svg{ width:30%; height:30%; opacity:0.85; }
-  .page-detail-media.expanded{
-    top:0; left:0; width:100vw; height:min(62vh, 560px);
-    border-radius:0;
+  .thumb-row .th:hover{ border-color: var(--rose); transform: translateY(-2px); }
+  .thumb-row .th svg{ width:22px; height:22px; opacity:0.6; }
+  .thumb-row .th img{ width:100%; height:100%; object-fit:cover; }
+
+  .detail-info .eyebrow{ opacity:1; animation:none; }
+  .detail-info h1{
+    font-family:'Fraunces', serif; font-weight:600; font-size: clamp(32px, 3.6vw, 46px);
+    margin-top: 12px; line-height: 1.08;
   }
-  .page-detail-info{
-    position:relative; z-index:151;
-    max-width: 640px; margin: 0 auto;
-    padding: 40px 6% 100px;
-    opacity:0; transform: translateY(18px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
+  .detail-info .detail-sub{
+    color: var(--muted); font-size:15px; margin-top:10px; line-height:1.5;
   }
-  .page-detail.content-in .page-detail-info{ opacity:1; transform:translateY(0); }
-  .page-detail-info .tag{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mint); letter-spacing:0.05em; }
-  .page-detail-info h2{ font-family:'Fraunces', serif; font-size: clamp(28px,4vw,40px); font-weight:600; margin-top:10px; }
-  .page-detail-info .desc{ color:var(--muted); font-size:15.5px; line-height:1.8; margin-top:18px; white-space:pre-line; }
-  .page-detail-foot{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-top:32px; padding-top:26px; border-top:1px solid var(--line);
+  .detail-price-row{
+    display:flex; align-items:baseline; gap:12px; margin-top: 26px;
   }
-  .page-detail-price{ font-family:'JetBrains Mono', monospace; color:var(--rose); font-size:24px; font-weight:700; }
-  .page-detail-spacer{ height: min(62vh, 560px); }
-  @media (max-width: 780px){
-    .page-detail-media.expanded{ height:52vh; }
-    .page-detail-spacer{ height:52vh; }
+  .detail-price{
+    font-family:'JetBrains Mono', monospace; font-size: 28px; font-weight:600; color: var(--rose);
+  }
+  .detail-price-note{ font-size:12.5px; color: var(--muted); }
+
+  .detail-desc{
+    margin-top: 26px; padding-top: 26px; border-top: 1px solid var(--line);
+    color: var(--ink); font-size: 15px; line-height: 1.75;
+  }
+
+  .detail-meta{
+    margin-top: 26px; display:grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  }
+  .meta-box{
+    background: var(--surface); border:1px solid var(--line); border-radius:14px; padding: 16px 18px;
+  }
+  .meta-box .k{ font-family:'JetBrains Mono', monospace; font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase; color:var(--mint);}
+  .meta-box .v{ font-family:'Fraunces', serif; font-size:17px; margin-top:6px; font-weight:600;}
+
+  .detail-actions{
+    margin-top: 34px; display:flex; gap:12px;
+  }
+  .detail-buy{
+    flex:1;
+    background: var(--rose); color:#fff; border:none; border-radius: 999px;
+    padding: 16px 20px; font-weight:700; font-size:15.5px; cursor:pointer;
+    box-shadow: 0 10px 26px rgba(124,92,191,0.3);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-align:center; text-decoration:none; display:block;
+  }
+  .detail-buy:hover{ transform: translateY(-2px); box-shadow: 0 14px 32px rgba(124,92,191,0.4); }
+  .detail-note{
+    margin-top: 16px; font-size: 12.5px; color: var(--muted); display:flex; align-items:center; gap:8px;
+  }
+  .detail-note svg{ width:15px; height:15px; flex-shrink:0; color: var(--mint); }
+
+  body.lock{ overflow:hidden; }
+
+  @media (max-width: 980px){
+    .grid{ grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 900px){
+    .detail-body{ grid-template-columns: 1fr; gap: 36px; padding-top: 36px; }
   }
 
   /* PAYMENT MODAL */
@@ -441,10 +535,11 @@
     <h2>เลือกแพ็กที่ใช่สำหรับคุณ</h2>
     <p>ทุกแพ็กเป็นไฟล์ความละเอียดสูง ส่งอัตโนมัติทันทีหลังชำระเงินสำเร็จ</p>
   </div>
-  <div class="grid">
+  <div class="grid" id="pkg-grid">
 
     <div class="pkg" data-id="moonlit" data-desc="ธีมกลางคืน โทนฟ้าม่วงนวล ให้ความรู้สึกสงบและลึกลับ ภาพความละเอียดสูงทั้งหมด 6 ภาพ เหมาะสำหรับคนที่ชอบบรรยากาศเงียบสงบยามค่ำคืน">
       <div class="pkg-thumb">
+        <span class="stack-badge">6 ภาพ</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><path d="M12 3l2.5 6.5L21 12l-6.5 2.5L12 21l-2.5-6.5L3 12l6.5-2.5z"/></svg>
       </div>
       <div class="tag">SET 01 · 6 ภาพ</div>
@@ -458,6 +553,7 @@
 
     <div class="pkg" data-id="daydream" data-desc="โทนพาสเทลอบอุ่น บรรยากาศสบายๆ ยามบ่าย ภาพความละเอียดสูงทั้งหมด 8 ภาพ ให้ความรู้สึกผ่อนคลายเหมือนวันหยุดสบายๆ">
       <div class="pkg-thumb">
+        <span class="stack-badge">8 ภาพ</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="#3FA994" stroke-width="1.4"><circle cx="12" cy="12" r="8"/><path d="M12 4v16M4 12h16"/></svg>
       </div>
       <div class="tag">SET 02 · 8 ภาพ</div>
@@ -471,6 +567,7 @@
 
     <div class="pkg" data-id="festival" data-desc="ชุดธีมเทศกาล สีสันสดใส ลายผ้าและโคมไฟ ภาพความละเอียดสูงทั้งหมด 5 ภาพ สนุกสดใสเหมาะกับคนชอบสีสัน">
       <div class="pkg-thumb">
+        <span class="stack-badge">5 ภาพ</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><rect x="4" y="4" width="16" height="16" rx="4"/></svg>
       </div>
       <div class="tag">SET 03 · 5 ภาพ</div>
@@ -484,6 +581,7 @@
 
     <div class="pkg" data-id="yuna" data-desc="กล่องเก็บภาพรวมของยูนะ ตั้งแต่ท่าทางสบายๆ ไปจนถึงมุมกล้องหลากสไตล์ วาดขึ้นใหม่ทุกภาพในคอลเลกชันนี้ ไฟล์ความละเอียดสูง พร้อมใช้เป็นวอลเปเปอร์หรือของสะสม">
       <div class="pkg-thumb">
+        <span class="stack-badge">10 ภาพ</span>
         <img src="images/yunacover.png" style="width:100%; height:100%; object-fit:cover;">
       </div>
       <div class="tag">ALBUM · 10 ภาพ</div>
@@ -497,14 +595,14 @@
 
     <div class="pkg" data-id="MaeKaew" data-desc="ใส่คำอธิบายยาวๆ ที่จะโชว์ตอนกดเข้าไปดูรายละเอียด">
   <div class="pkg-thumb">
-    <img src="images/ใส่ชื่อไฟล์รูป.jpg" style="width:100%; height:150%; object-fit:cover;">
+    <img src="images/ใส่ชื่อไฟล์รูป.jpg" style="width:100%; height:100%; object-fit:cover;">
   </div>
   <div class="tag">ใส่ป้ายกำกับ เช่น SET 04 · 7 ภาพ</div>
   <h3>แม่แก้ว</h3>
   <p>แม่แก้วสวยยๆ</p>
   <div class="pkg-foot">
     <div class="pkg-price">฿25</div>
-    <button class="pkg-buy" data-buy="ใส่_ไอดีเดียวกับข้างบน">ซื้อเลย</button>
+    <button class="pkg-buy" data-buy="MaeKaew">ซื้อเลย</button>
   </div>
 </div>
     
@@ -546,18 +644,40 @@
   <div>สร้างด้วย Claude</div>
 </footer>
 
-<!-- PAGE DETAIL (fullscreen shared-element view) -->
-<div class="page-detail" id="pageDetail" aria-hidden="true">
-  <button class="page-detail-back" id="pageDetailBack">✕</button>
-  <div class="page-detail-media" id="pageDetailMedia"></div>
-  <div class="page-detail-spacer"></div>
-  <div class="page-detail-info">
-    <div class="tag" id="pdTag"></div>
-    <h2 id="pdTitle"></h2>
-    <p class="desc" id="pdDesc"></p>
-    <div class="page-detail-foot">
-      <div class="page-detail-price" id="pdPrice"></div>
-      <button class="modal-buy" id="pdBuyBtn">ซื้อเลย</button>
+<!-- PRODUCT DETAIL OVERLAY (shared by every album) -->
+<div class="detail-overlay" id="detailOverlay" role="dialog" aria-modal="true" aria-label="รายละเอียดสินค้า">
+  <div class="detail-bar">
+    <button class="detail-back" id="detailBack">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      กลับไปคอลเลกชัน
+    </button>
+    <div class="detail-crumb">คอลเลกชัน / <b id="dCrumb"></b></div>
+  </div>
+  <div class="detail-body">
+    <div>
+      <div class="detail-hero-img" id="dHero"></div>
+      <div class="thumb-row" id="dThumbRow"></div>
+    </div>
+    <div class="detail-info">
+      <div class="eyebrow" id="dEyebrow"></div>
+      <h1 id="dTitle"></h1>
+      <p class="detail-sub" id="dSub"></p>
+      <div class="detail-price-row">
+        <div class="detail-price" id="dPrice"></div>
+        <div class="detail-price-note" id="dPriceNote"></div>
+      </div>
+      <div class="detail-meta">
+        <div class="meta-box"><div class="k">จำนวนภาพ</div><div class="v" id="dCount"></div></div>
+        <div class="meta-box"><div class="k">รูปแบบไฟล์</div><div class="v">PNG ความละเอียดสูง</div></div>
+      </div>
+      <div class="detail-desc" id="dDesc"></div>
+      <div class="detail-actions">
+        <button class="detail-buy" id="dBuyBtn"></button>
+      </div>
+      <div class="detail-note">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        จ่ายเงินเสร็จ ลิงก์ดาวน์โหลดขึ้นในหน้าเว็บทันที ไม่ต้องรอแอดมิน
+      </div>
     </div>
   </div>
 </div>
@@ -599,19 +719,23 @@
   }, {threshold: 0.15});
   document.querySelectorAll('.pkg, .flow-step').forEach(el=> io.observe(el));
 
-  /* ---------- PAGE DETAIL (fullscreen shared-element expand) ---------- */
+  /* ---------- PRODUCT DETAIL OVERLAY ---------- */
   // ระบบนี้ทำงานอัตโนมัติกับการ์ด .pkg ทุกใบ ไม่ต้องแก้ JS เพิ่มเวลาเพิ่มอัลบั้มใหม่
-  const pageDetail = document.getElementById('pageDetail');
-  const pageDetailMedia = document.getElementById('pageDetailMedia');
-  const pageDetailBack = document.getElementById('pageDetailBack');
-  const pdTag = document.getElementById('pdTag');
-  const pdTitle = document.getElementById('pdTitle');
-  const pdDesc = document.getElementById('pdDesc');
-  const pdPrice = document.getElementById('pdPrice');
-  const pdBuyBtn = document.getElementById('pdBuyBtn');
+  // เพิ่มการ์ดใหม่ในกริด ใส่ data-id / data-desc ให้ครบ ก็ใช้งานได้ทันที
+  const detailOverlay = document.getElementById('detailOverlay');
+  const detailBack = document.getElementById('detailBack');
+  const dCrumb = document.getElementById('dCrumb');
+  const dHero = document.getElementById('dHero');
+  const dThumbRow = document.getElementById('dThumbRow');
+  const dEyebrow = document.getElementById('dEyebrow');
+  const dTitle = document.getElementById('dTitle');
+  const dSub = document.getElementById('dSub');
+  const dPrice = document.getElementById('dPrice');
+  const dPriceNote = document.getElementById('dPriceNote');
+  const dCount = document.getElementById('dCount');
+  const dDesc = document.getElementById('dDesc');
+  const dBuyBtn = document.getElementById('dBuyBtn');
   let currentProductId = null;
-  let originRect = null;   // ตำแหน่ง/ขนาดของรูปปกตอนยังเป็นการ์ดเล็ก ใช้ตอนเล่นย้อนกลับ
-  let originRadius = '14px';
 
   function getCoverMarkup(pkgEl){
     // ใช้รูปเต็มตัวถ้ามีการใส่ data-cover ไว้ ไม่งั้น fallback ไปใช้รูป/ไอคอนของ thumbnail เดิม
@@ -628,75 +752,88 @@
     const tag = pkgEl.querySelector('.tag').textContent;
     const title = pkgEl.querySelector('h3').textContent;
     const price = pkgEl.querySelector('.pkg-price').textContent;
-    const desc = pkgEl.dataset.desc || pkgEl.querySelector('p').textContent;
+    const shortDesc = pkgEl.querySelector('p').textContent;
+    const longDesc = pkgEl.dataset.desc || shortDesc;
+    const countMatch = tag.match(/\d+/);
+    const count = countMatch ? countMatch[0] + ' ภาพ' : '-';
+    const cover = getCoverMarkup(pkgEl);
 
     currentProductId = id;
-    pdTag.textContent = tag;
-    pdTitle.textContent = title;
-    pdDesc.textContent = desc;
-    pdPrice.textContent = price;
-    pageDetailMedia.innerHTML = getCoverMarkup(pkgEl);
+    dCrumb.textContent = title;
+    dEyebrow.textContent = tag;
+    dTitle.textContent = title;
+    dSub.textContent = shortDesc;
+    dPrice.textContent = price;
+    dPriceNote.textContent = 'ราคารวม / อัลบั้ม ' + count;
+    dCount.textContent = count;
+    dDesc.textContent = longDesc;
+    dHero.innerHTML = cover;
+    dBuyBtn.textContent = 'ซื้อทันที · ' + price;
 
-    // ---- FLIP step 1: จำตำแหน่ง/ขนาดรูปการ์ดเดิมไว้ (จุดเริ่มของแอนิเมชัน) ----
-    const thumb = pkgEl.querySelector('.pkg-thumb');
-    const r = thumb.getBoundingClientRect();
-    originRect = r;
-    originRadius = getComputedStyle(thumb).borderRadius || '14px';
+    dThumbRow.innerHTML = Array.from({length:5}).map(()=> `<div class="th">${cover}</div>`).join('');
 
-    pageDetailMedia.style.transition = 'none';
-    pageDetailMedia.style.top = r.top + 'px';
-    pageDetailMedia.style.left = r.left + 'px';
-    pageDetailMedia.style.width = r.width + 'px';
-    pageDetailMedia.style.height = r.height + 'px';
-    pageDetailMedia.style.borderRadius = originRadius;
-    pageDetailMedia.classList.remove('expanded');
-
-    pageDetail.classList.add('open');
-    pageDetail.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
-    window.scrollTo(0, 0);
-
-    // ---- FLIP step 2: บังคับ reflow แล้วค่อยขยายไปเต็มจอ (Play) ----
-    requestAnimationFrame(()=>{
-      pageDetailMedia.offsetHeight; // force reflow
-      pageDetailMedia.style.transition = '';
-      pageDetailMedia.classList.add('expanded');
-      pageDetail.classList.add('content-in');
-    });
+    detailOverlay.classList.add('open');
+    document.body.classList.add('lock');
+    detailOverlay.scrollTop = 0;
   }
 
   function closeDetail(){
-    pageDetail.classList.remove('content-in');
-
-    // เล่นย้อนกลับ: หดรูปกลับไปที่ตำแหน่งการ์ดเดิม
-    if (originRect){
-      pageDetailMedia.classList.remove('expanded');
-      pageDetailMedia.style.top = originRect.top + 'px';
-      pageDetailMedia.style.left = originRect.left + 'px';
-      pageDetailMedia.style.width = originRect.width + 'px';
-      pageDetailMedia.style.height = originRect.height + 'px';
-      pageDetailMedia.style.borderRadius = originRadius;
-    }
-
-    setTimeout(()=>{
-      pageDetail.classList.remove('open');
-      pageDetail.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-    }, 600);
+    detailOverlay.classList.remove('open');
+    document.body.classList.remove('lock');
   }
 
   document.querySelectorAll('.pkg').forEach(pkg=>{
-    pkg.style.cursor = 'pointer';
     pkg.addEventListener('click', (e)=>{
       if(e.target.closest('.pkg-buy')) return; // ปุ่มซื้อเลยบนการ์ด ให้ไปเช็คเอาต์ตรงๆ ไม่ต้องเปิดหน้ารายละเอียด
       openDetail(pkg);
     });
+    pkg.addEventListener('keydown', (e)=>{
+      if((e.key === 'Enter' || e.key === ' ') && !e.target.closest('.pkg-buy')){
+        e.preventDefault();
+        openDetail(pkg);
+      }
+    });
   });
 
-  pageDetailBack.addEventListener('click', closeDetail);
+  detailBack.addEventListener('click', closeDetail);
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape'){
+      if(detailOverlay.classList.contains('open')) closeDetail();
+      if(payOverlay && payOverlay.classList.contains('open')){
+        payOverlay.classList.remove('open');
+        document.body.style.overflow = '';
+        if(pollTimer) clearInterval(pollTimer);
+      }
+    }
+  });
 
-  pdBuyBtn.addEventListener('click', ()=>{
+  dBuyBtn.addEventListener('click', ()=>{
     startPayment(currentProductId); // เปิด modal ชำระเงินซ้อนบนหน้ารายละเอียดได้เลย ไม่ต้องปิดหน้านี้ก่อน
+  });
+
+  /* ---------- HOVER-FOCUS FAN EFFECT ON THE GRID ---------- */
+  const pkgGrid = document.getElementById('pkg-grid');
+  const pkgCards = Array.from(pkgGrid.querySelectorAll('.pkg'));
+
+  pkgCards.forEach(card=>{
+    card.addEventListener('mouseenter', ()=>{
+      pkgGrid.classList.add('hovering');
+      pkgCards.forEach(c=> c.classList.toggle('is-focused', c === card));
+    });
+    card.addEventListener('focus', ()=>{
+      pkgGrid.classList.add('hovering');
+      pkgCards.forEach(c=> c.classList.toggle('is-focused', c === card));
+    });
+  });
+  pkgGrid.addEventListener('mouseleave', ()=>{
+    pkgGrid.classList.remove('hovering');
+    pkgCards.forEach(c=> c.classList.remove('is-focused'));
+  });
+  pkgGrid.addEventListener('focusout', (e)=>{
+    if(!pkgGrid.contains(e.relatedTarget)){
+      pkgGrid.classList.remove('hovering');
+      pkgCards.forEach(c=> c.classList.remove('is-focused'));
+    }
   });
 
   /* ---------- BUY BUTTONS (on cards) ---------- */
@@ -792,15 +929,6 @@
   });
   payOverlay.addEventListener('click', (e)=>{
     if(e.target === payOverlay){
-      payOverlay.classList.remove('open');
-      document.body.style.overflow = '';
-      if(pollTimer) clearInterval(pollTimer);
-    }
-  });
-
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape'){
-      if(pageDetail.classList.contains('open')) closeDetail();
       payOverlay.classList.remove('open');
       document.body.style.overflow = '';
       if(pollTimer) clearInterval(pollTimer);
