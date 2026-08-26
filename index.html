@@ -273,9 +273,10 @@
   .modal-buy{
     background: var(--rose); color:#fff; border:none; font-weight:700; font-size:15px;
     padding: 14px 30px; border-radius: 999px; cursor:pointer;
-    transition: transform 0.2s ease;
+    box-shadow: 0 10px 26px rgba(124,92,191,0.28);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
   }
-  .modal-buy:hover{ transform: translateY(-2px); }
+  .modal-buy:hover{ transform: translateY(-2px); box-shadow: 0 14px 34px rgba(124,92,191,0.4); }
 
   /* PAGE DETAIL — shared-element expand view (fullscreen) */
   .page-detail{
@@ -285,52 +286,108 @@
     overflow-y:auto;
   }
   .page-detail.open{ display:block; }
+  .page-detail-wash{
+    position:fixed; inset:0; z-index:149; pointer-events:none;
+    background:
+      radial-gradient(ellipse 70% 45% at 12% 0%, rgba(124,92,191,0.10), transparent 60%),
+      radial-gradient(ellipse 55% 40% at 95% 8%, rgba(63,169,148,0.08), transparent 60%);
+    opacity:0; transition: opacity 0.7s ease;
+  }
+  .page-detail.content-in .page-detail-wash{ opacity:1; }
   .page-detail-back{
     position:fixed; top:22px; left:22px; z-index:160;
-    width:42px; height:42px; border-radius:50%;
+    width:44px; height:44px; border-radius:50%;
     background: rgba(255,255,255,0.92); border:none; cursor:pointer;
     display:flex; align-items:center; justify-content:center;
     font-size:18px; color:var(--ink);
     box-shadow: 0 4px 14px rgba(0,0,0,0.18);
     opacity:0; transform: translateY(-8px);
-    transition: opacity 0.35s ease 0.15s, transform 0.35s ease 0.15s;
+    transition: opacity 0.35s ease 0.15s, transform 0.25s ease, background 0.25s;
   }
+  .page-detail-back:hover{ background:#fff; transform: translateY(-8px) scale(1.06); }
   .page-detail.content-in .page-detail-back{ opacity:1; transform:translateY(0); }
+  .page-detail.content-in .page-detail-back:hover{ transform: translateY(0) scale(1.06); }
+
+  /* the media frame: sits behind the (real, uncropped) product image like matting */
   .page-detail-media{
-    position:fixed; z-index:150;
+    position:fixed; z-index:150; box-sizing:border-box;
     background: linear-gradient(135deg, var(--surface-hi), #E4D9F7);
     overflow:hidden;
     display:flex; align-items:center; justify-content:center;
     transition: top 0.6s cubic-bezier(.2,.8,.2,1), left 0.6s cubic-bezier(.2,.8,.2,1),
                 width 0.6s cubic-bezier(.2,.8,.2,1), height 0.6s cubic-bezier(.2,.8,.2,1),
-                border-radius 0.6s cubic-bezier(.2,.8,.2,1);
+                border-radius 0.6s cubic-bezier(.2,.8,.2,1), padding 0.6s cubic-bezier(.2,.8,.2,1);
   }
-  .page-detail-media img{ width:100%; height:100%; object-fit:cover; display:block; }
+  /* the image itself keeps its original proportions — never cropped — inside a clean framed card */
+  .page-detail-media img{
+    max-width:100%; max-height:100%; width:auto; height:auto;
+    object-fit:contain; display:block;
+    border-radius:18px;
+    box-shadow: 0 24px 60px var(--shadow);
+    background: var(--bg);
+    opacity:0; transform: scale(0.96);
+    transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+  }
+  .page-detail-media.expanded img{ opacity:1; transform:scale(1); }
   .page-detail-media svg{ width:30%; height:30%; opacity:0.85; }
   .page-detail-media.expanded{
-    top:0; left:0; width:100vw; height:min(62vh, 560px);
+    top:0; left:0; width:100vw; height:min(72vh, 660px);
     border-radius:0;
+    padding: 40px 6% 60px;
   }
+  .page-detail-media::after{
+    content:''; position:absolute; left:0; right:0; bottom:0; height:130px; z-index:1;
+    background: linear-gradient(to bottom, transparent, var(--bg));
+    pointer-events:none; opacity:0; transition: opacity 0.5s ease 0.25s;
+  }
+  .page-detail-media.expanded::after{ opacity:1; }
+
   .page-detail-info{
     position:relative; z-index:151;
-    max-width: 640px; margin: 0 auto;
-    padding: 40px 6% 100px;
+    max-width: 680px; margin: 0 auto;
+    padding: 6px 6% 110px;
     opacity:0; transform: translateY(18px);
     transition: opacity 0.5s ease, transform 0.5s ease;
   }
   .page-detail.content-in .page-detail-info{ opacity:1; transform:translateY(0); }
-  .page-detail-info .tag{ font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mint); letter-spacing:0.05em; }
-  .page-detail-info h2{ font-family:'Fraunces', serif; font-size: clamp(28px,4vw,40px); font-weight:600; margin-top:10px; }
-  .page-detail-info .desc{ color:var(--muted); font-size:15.5px; line-height:1.8; margin-top:18px; white-space:pre-line; }
-  .page-detail-foot{
-    display:flex; align-items:center; justify-content:space-between;
-    margin-top:32px; padding-top:26px; border-top:1px solid var(--line);
+  .page-detail-info .tag{
+    font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--mint);
+    letter-spacing:0.08em; text-transform:uppercase;
+    display:inline-flex; align-items:center; gap:8px;
   }
-  .page-detail-price{ font-family:'JetBrains Mono', monospace; color:var(--rose); font-size:24px; font-weight:700; }
-  .page-detail-spacer{ height: min(62vh, 560px); }
+  .page-detail-info .tag::before{ content:''; width:6px; height:6px; border-radius:50%; background:var(--mint); }
+  .page-detail-info h2{ font-family:'Fraunces', serif; font-size: clamp(28px,4vw,42px); font-weight:600; margin-top:12px; line-height:1.12; }
+  .page-detail-info .desc{ color:var(--muted); font-size:15.5px; line-height:1.85; margin-top:20px; white-space:pre-line; }
+
+  .page-detail-highlights{ display:flex; flex-wrap:wrap; gap:10px; margin-top:26px; }
+  .page-detail-highlights span{
+    display:inline-flex; align-items:center; gap:7px;
+    font-size:12.5px; font-weight:600; color:var(--ink);
+    background: var(--surface); border:1px solid var(--line);
+    padding:8px 14px; border-radius:999px;
+    transition: border-color 0.25s, transform 0.25s;
+  }
+  .page-detail-highlights span:hover{ border-color: rgba(124,92,191,0.35); transform: translateY(-1px); }
+  .page-detail-highlights span::before{ content:''; width:6px; height:6px; border-radius:50%; background: var(--rose); flex:none; }
+
+  .page-detail-foot{
+    display:flex; align-items:center; justify-content:space-between; gap:20px;
+    margin-top:36px; padding: 22px 26px;
+    border:1px solid var(--line); border-radius:20px;
+    background: var(--surface);
+    box-shadow: 0 16px 40px rgba(76,58,120,0.08);
+  }
+  .page-detail-price-wrap .label{
+    font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--muted);
+    letter-spacing:0.08em; text-transform:uppercase; display:block; margin-bottom:4px;
+  }
+  .page-detail-price{ font-family:'JetBrains Mono', monospace; color:var(--rose); font-size:26px; font-weight:700; }
+  .page-detail-spacer{ height: min(72vh, 660px); }
   @media (max-width: 780px){
-    .page-detail-media.expanded{ height:52vh; }
-    .page-detail-spacer{ height:52vh; }
+    .page-detail-media.expanded{ height:56vh; padding: 26px 5% 44px; }
+    .page-detail-spacer{ height:56vh; }
+    .page-detail-foot{ flex-direction:column; align-items:stretch; gap:14px; }
+    .page-detail-foot .modal-buy{ width:100%; }
   }
 
   /* PAYMENT MODAL */
@@ -548,6 +605,7 @@
 
 <!-- PAGE DETAIL (fullscreen shared-element view) -->
 <div class="page-detail" id="pageDetail" aria-hidden="true">
+  <div class="page-detail-wash"></div>
   <button class="page-detail-back" id="pageDetailBack">✕</button>
   <div class="page-detail-media" id="pageDetailMedia"></div>
   <div class="page-detail-spacer"></div>
@@ -555,8 +613,16 @@
     <div class="tag" id="pdTag"></div>
     <h2 id="pdTitle"></h2>
     <p class="desc" id="pdDesc"></p>
+    <div class="page-detail-highlights">
+      <span>ไฟล์ความละเอียดสูง</span>
+      <span>ส่งอัตโนมัติหลังชำระเงิน</span>
+      <span>ดาวน์โหลดได้ทันที</span>
+    </div>
     <div class="page-detail-foot">
-      <div class="page-detail-price" id="pdPrice"></div>
+      <div class="page-detail-price-wrap">
+        <span class="label">ราคา</span>
+        <div class="page-detail-price" id="pdPrice"></div>
+      </div>
       <button class="modal-buy" id="pdBuyBtn">ซื้อเลย</button>
     </div>
   </div>
