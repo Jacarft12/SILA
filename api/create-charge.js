@@ -10,7 +10,7 @@ const PRODUCTS = {
   daydream: { name: 'Daydream',     amount: 35000 }, // 350 บาท
   festival: { name: 'Festival',     amount: 28000 }, // 280 บาท
   yuna:     { name: 'ยูนะ Album',    amount: 39000 }, // 390 บาท
-  MaeKaew:  { name: 'แม่แก้ว',        amount: 2500 },  // 25 บาท
+  'yuna-live2d': { name: 'ยูนะ Live2D', amount: 89000 }, // 890 บาท — ตัวอย่าง DLC หมวด Live2D ใช้ระบบเดียวกับหมวดภาพเป๊ะๆ แค่คนละ id
 };
 
 export default async function handler(req, res) {
