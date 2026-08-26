@@ -8,7 +8,7 @@
 const PRODUCTS = {
   moonlit:  { name: 'Moonlit',      amount: 25000 }, // หน่วยสตางค์ = 250 บาท
   daydream: { name: 'Daydream',     amount: 35000 }, // 350 บาท
-  festival: { name: 'Festival',     amount: 28000 }, // 280 บาท
+  Arina: { name: 'เอลีน่า Album',     amount: 6000 }, // 60 บาท
   yuna:     { name: 'ยูนะ Album',    amount: 5000 }, // 50 บาท
   'yuna-live2d': { name: 'ยูนะ Live2D', amount: 89000 }, // 890 บาท — ตัวอย่าง DLC หมวด Live2D ใช้ระบบเดียวกับหมวดภาพเป๊ะๆ แค่คนละ id
 };
