@@ -634,11 +634,46 @@
       <span class="count">1 โมเดล</span>
     </div>
     <div class="grid" id="pkg-grid-live2d">
-
+  
       <div class="pkg" data-id="hana-live2d" data-format="คลิปLive2D (.zip + .moc3)" data-desc="คลิปLive2D ฮานะ ขยับได้เป็นเวลา 5 วิ ฉากตอน...ในห้องน้ำ แซ่บมาก ซื้อไว้ดูหรือเป็นของสะสม">
         <div class="pkg-thumb">
           <span class="stack-badge">1 คลิป</span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="#7C5CBF" stroke-width="1.4"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+          <div class="video-thumbnail-container">
+    <img src="images/hanacoverlive.png">
+    <svg class="play-button-overlay" viewBox="0 0 24 24" fill="rgba(0, 0, 0, 0.4)" stroke="#7C5CBF" stroke-width="1.4">
+        <polygon points="6 4 20 12 6 20 6 4"/>
+    </svg>
+</div>
+
+<style>
+/* 1. กล่องครอบหลัก ตั้งค่าเป็น Relative เพื่อให้เด็กข้างในอ้างอิงตำแหน่งได้ */
+.video-thumbnail-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 400px; /* ปรับขนาดความกว้างสูงสุดได้ตามต้องการ */
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* 2. จัดการรูปภาพให้เต็มกล่อง */
+.video-thumbnail-container img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+/* 3. จัดตำแหน่งไอคอน Play ให้มาอยู่ตรงกลางเป๊ะๆ ด้วย Absolute */
+.play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 64px;  /* ปรับขนาดความใหญ่ของปุ่มเพลย์ตรงนี้ */
+    height: 64px;
+    pointer-events: none; /* ป้องกันไม่ให้เมาส์ติดขัดเวลาคลิกโดนไอคอน */
+}
+</style>
         </div>
         <div class="tag">LIVE2D · 1 คลิป</div>
         <h3>ฮานะ Live2D</h3>
